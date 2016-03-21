@@ -2,8 +2,12 @@ package tokyo.tommykw.easing.core;
 
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.os.Handler;
 import android.os.Message;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by tommy on 2016/03/19.
@@ -49,6 +53,48 @@ public class ViewAnimator extends Animator {
         return false;
     }
 
+    private static ThreadLocal<AnimationHandler> animationHandler = new ThreadLocal<AnimationHandler>();
+
+    private static final ThreadLocal<List<ValueAnimator>> animations =
+            new ThreadLocal<List<ValueAnimator>>() {
+                @Override
+                protected List<ValueAnimator> initialValue() {
+                    return new ArrayList<>();
+                }
+            };
+
+    private static final ThreadLocal<List<ValueAnimator>> pendingAnimations =
+            new ThreadLocal<List<ValueAnimator>>() {
+                @Override
+                protected List<ValueAnimator> initialValue() {
+                    return new ArrayList<>();
+                }
+            };
+
+    private static final ThreadLocal<List<ValueAnimator>> delayedAnimations =
+            new ThreadLocal<List<ValueAnimator>>() {
+                @Override
+                protected List<ValueAnimator> initialValue() {
+                    return new ArrayList<>();
+                }
+            };
+
+    private static final ThreadLocal<List<ValueAnimator>> readyAnimations =
+            new ThreadLocal<List<ValueAnimator>>() {
+                @Override
+                protected List<ValueAnimator> initialValue() {
+                    return new ArrayList<>();
+                }
+            };
+
+    private static final ThreadLocal<List<ValueAnimator>> endingAnimations =
+            new ThreadLocal<List<ValueAnimator>>() {
+                @Override
+                protected List<ValueAnimator> initialValue() {
+                    return new ArrayList<>();
+                }
+            };
+
     private static class AnimationHandler extends Handler {
 
         @Override
@@ -56,4 +102,13 @@ public class ViewAnimator extends Animator {
             boolean callAgain = true;
         }
     }
+
+    public static interface AnimatorListener {
+        void onAnimate(ViewAnimator animation);
+    }
+
+    public static int getCurrentAnimationCount() {
+        return 0;
+    }
+
 }
